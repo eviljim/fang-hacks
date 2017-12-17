@@ -12,9 +12,11 @@ status()
 start()
 {
   LOG=/dev/null
+  # /media/mmcblk0p2/data/log/20-rtsp-server.log
   echo "Starting RTSP server..."
-  snx_rtsp_server -W 1920 -H 1080 -Q 10 -b 4096 -a >$LOG 2>&1 &
+  snx_rtsp_server -W 1920 -H 1080 -Q 10 -F 15 -i 15 -a >$LOG 2>&1 &
   echo "$!" > "$PIDFILE"
+  /media/mmcblk0p2/data/test/snx_isp_ctl --osdset-en 1 --osdset-ts 1 --osdset-template 1234567890./-:Date --osdset-gain 2 --osdset-bgtransp 0x1 --osdset-bgcolor 0x000000 --osdset-position 1300,1000
 }
 
 stop()
@@ -25,10 +27,18 @@ stop()
   fi
 }
 
+restart()
+{
+    echo 'Restarting'
+    stop
+    sleep 5
+    start
+}
+
 if [ $# -eq 0 ]; then
   start
 else
-  case $1 in start|stop|status)
+  case $1 in start|stop|status|restart)
     $1
     ;;
   esac
