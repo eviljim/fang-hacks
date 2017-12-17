@@ -4,10 +4,10 @@ echo "Content-type: text/html"
 echo ""
 source func.cgi
 cat << EOF
-<!DOCTYPE html>
 <html>
 <head>
 <title>Fang Hacks</title>
+<head>
 <style type="text/css">
 body { background-color: #B0E0E6; font-family: verdana, sans-serif; }
 .err { color: red; }
@@ -17,7 +17,6 @@ button, input[type=submit] { background-color: #ddeaff; }
 .tbl th { text-align: left; vertical-align: top; font-weight: bold; padding: 10px 5px; border-style: solid; border-width: 1px; overflow: hidden; word-break: normal; }
 .tbl td { padding: 10px 5px; border-style: solid; border-width: 1px; overflow: hidden; word-break: normal; }
 </style>
-</head>
 <body>
 <h1>Boot Scripts</h1>
 <hr/>
@@ -47,6 +46,11 @@ if [ -n "$F_script" ]; then
         $SCRIPT_HOME/$script stop 2>&1 && echo "OK" || echo "NOK"
         echo "<br/>"
         ;;
+      restart)
+	echo "Restart script '$script'...<br/>"
+        $SCRIPT_HOME/$script restart 2>&1 && echo "OK" || echo "NOK"
+	echo "<br/>"
+	;;
       enable)
         echo "Enable script '$script'...<br/>"
         chmod a+x "$SCRIPT_HOME/$script" 2>&1
@@ -55,6 +59,10 @@ if [ -n "$F_script" ]; then
         echo "Contents of script '$script':<br/>"
         echo "<pre>$(cat $SCRIPT_HOME/$script 2>&1)</pre>"
         ;;
+      log)
+	echo "Contents of log: '$script':<br/>"
+	echo "<pre>$(tail -n 500 /var/log/$script.log)</pre"
+	;;
       *)
         echo "Unsupported command '$F_cmd'<br/>"
         ;;
@@ -70,7 +78,7 @@ if [ ! -d "$SCRIPT_HOME" ]; then
 else
   SCRIPTS=$(ls -A "$SCRIPT_HOME")
   echo "<table class='tbl'>"
-  echo "<tr><th>Service</th><th>Status</th><th/><th/><th/></tr>"
+  echo "<tr><th>Service</th><th>Status</th><th/><th/><th/><th/><th/><th/></tr>"
   for i in $SCRIPTS; do
     echo "<tr>"
     echo "<td>$i</td>"
@@ -100,13 +108,16 @@ else
         fi
       else
         echo "<td><button title='Run script' type='button' onClick=\"window.location.href='scripts?cmd=start&script=$i'\">Run</button></td>"
+	echo "<td></td>"
       fi
 
       if [ $(grep "^stop\(\)" "$SCRIPT_HOME/$i") ]; then
         if [ -n "$status" ]; then
           echo "<td><button title='Stop script' type='button' onClick=\"window.location.href='scripts?cmd=stop&script=$i'\">Stop</button></td>"
+          echo "<td><button title='Restart script' type='button' onClick=\"window.location.href='scripts?cmd=restart&script=$i'\">Restart</button</td>"
         else
           echo "<td><button title='Not running' disabled>Stop</button>"
+          echo "<td><button title='Not running' disabled>Restart</button</td>"
         fi
       else
         echo "<td></td>"
@@ -115,9 +126,10 @@ else
      else
       echo "<td/>"
       echo "<td><button title='Enable script' type='button' onClick=\"window.location.href='scripts?cmd=enable&script=$i'\">Enable</button></td>"
-      echo "<td/><td/>"
+      echo "<td/><td/><td/>"
     fi
     echo "<td><button title='View script' type='button' onClick=\"window.location.href='scripts?cmd=view&script=$i'\">View</button></td>"
+    echo "<td><button title='View logs' type='button' onClick=\"window.location.href='scripts?cmd=log&script=$i'\">Log</button></td>"
     echo "</tr>"
   done
   echo "</table>"
