@@ -1,4 +1,5 @@
 #!/bin/sh
+PIDFILE="/var/run/rtsp-server.pid"
 
 echo "Watchdog script started."
 
