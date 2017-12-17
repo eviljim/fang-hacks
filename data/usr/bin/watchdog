@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Watchdog script started."
+
+while :
+do
+	sleep 10
+	pid="$(cat "$PIDFILE" 2>/dev/null)"
+	if [ "$pid" ]; then
+	   kill -0 "$pid" >/dev/null && continue
+	   echo "Watchdog sad that $pid is dead?"
+	   /media/mmcblk0p2/data/etc/scripts/20-rtsp-server restart
+	fi
+done

@@ -1,0 +1,44 @@
+#!/bin/sh
+PIDFILE="/var/run/watchdog.pid"
+
+status()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+    kill -0 "$pid" >/dev/null && echo "PID: $pid" || return 1
+  fi
+}
+
+start()
+{
+  LOG=/media/mmcblk0p2/data/log/25-watchdog.log
+  echo "Starting watchdog script... woof."
+  watchdog >$LOG 2>&1 &
+  echo "$!" > "$PIDFILE"
+}
+
+stop()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+     kill $pid ||  rm "$PIDFILE"
+  fi
+}
+
+restart()
+{
+    echo 'Restarting'
+    stop
+    sleep 5
+    start
+}
+
+if [ $# -eq 0 ]; then
+  start
+else
+  case $1 in start|stop|status|restart)
+    $1
+    ;;
+  esac
+fi
+

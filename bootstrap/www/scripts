@@ -20,6 +20,7 @@ button, input[type=submit] { background-color: #ddeaff; }
 <body>
 <h1>Boot Scripts</h1>
 <hr/>
+<button title='Manage scripts' type='button' onClick="window.location.href='scripts'">Manage scripts</button>
 <button title='Status page' type='button' onClick="window.location.href='status'">Status</button>
 <button title='Reboot the device' type='button' onClick="window.location.href='action?cmd=reboot'">Reboot</button>
 <button title='Network' type='button' onClick="window.location.href='network'">Network</button>
@@ -61,7 +62,7 @@ if [ -n "$F_script" ]; then
         ;;
       log)
 	echo "Contents of log: '$script':<br/>"
-	echo "<pre>$(tail -n 500 /var/log/$script.log)</pre"
+	echo "<pre>$(tail -n 500 /media/mmcblk0p2/data/log/$script.log)</pre>"
 	;;
       *)
         echo "Unsupported command '$F_cmd'<br/>"
