@@ -3,6 +3,8 @@
 
 ## One time setup for new files and new log directory
 ```
+  IP=192.168.86.
+  ssh root@$IP
   mkdir /media/mmcblk0p2/data/log
   chmod ugo+x /media/mmcblk0p2/data/usr/bin/watchdog
   chmod ugo+x /media/mmcblk0p2/data/etc/scripts/25-watchdog
