@@ -1,10 +1,14 @@
 ## Modifications needed to base SD card image
   edited snx_autorun.sh (adds delay); needs to be done before boot
 
-## Create log folder on SD card:
+## One time setup for new files and new log directory
+```
   mkdir /media/mmcblk0p2/data/log
+  chmod ugo+x /media/mmcblk0p2/data/usr/bin/watchdog
+  chmod ugo+x /media/mmcblk0p2/data/etc/scripts/25-watchdog
+```
 
-## Deploy modified files:
+## Update modified files
 ```
   IP=192.168.86.
   scp data/usr/bin/watchdog root@$IP:/media/mmcblk0p2/data/usr/bin/watchdog
