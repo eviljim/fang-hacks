@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Fix for newer cameras not fully started before the script executes causing 404 errors for files in cgi-bin
+sleep 30
+
 [ -z "$MDEV" ] && return
 
 echo "$(date) - $0: Running (device: $MDEV)" >> /tmp/hacks.log 2>&1
